@@ -1,1 +1,21 @@
-node_modules
+# Arquivo .gitignore para o projeto Bazzar
+
+# Dependências do Node
+/node_modules
+
+# Pasta de build (gerada pelo 'npm run build')
+/dist
+
+# Logs de erro do npm e yarn
+npm-debug.log*
+yarn-error.log*
+yarn-debug.log*
+
+# Arquivos de ambiente (não devem ser versionados)
+.env
+.env.local
+.env.*.local
+
+# Arquivos de configuração do editor de código
+.vscode/
+.idea/
