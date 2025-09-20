@@ -10,12 +10,12 @@ Vue.config.productionTip = false;
 Vue.component("PaginaCarregando", PaginaCarregando);
 Vue.component("ErroNotificacao", ErroNotificacao);
 
-Vue.filter("numeroPreco", (valor) => {
+Vue.filter("numeroPreco", valor => {
   valor = Number(valor);
   if (!isNaN(valor)) {
     return valor.toLocaleString("pt-BR", {
       style: "currency",
-      currency: "BRL",
+      currency: "BRL"
     });
   } else {
     return "";
@@ -25,5 +25,5 @@ Vue.filter("numeroPreco", (valor) => {
 new Vue({
   router,
   store,
-  render: (h) => h(App),
+  render: h => h(App)
 }).$mount("#app");
