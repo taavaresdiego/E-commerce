@@ -58,7 +58,7 @@ body {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   color: #345;
   background: url("./assets/nuv.svg");
-  background-repeat: repeat; /* não repetir */
+  background-repeat: no-repeat; /* não repetir */
   background-position: center center; /* centralizar horizontal e vertical */
   background-size: 100%;
 }
