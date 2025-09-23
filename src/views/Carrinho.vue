@@ -20,7 +20,7 @@
           Total: <span>{{ total | numeroPreco }}</span>
         </p>
       </div>
-      <router-link to="/usuario/comprar" class="btn"
+      <router-link :to="{ name: 'comprar' }" class="btn"
         >Finalizar Compra</router-link
       >
     </div>
