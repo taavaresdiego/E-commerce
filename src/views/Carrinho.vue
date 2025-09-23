@@ -3,13 +3,19 @@
     <div v-if="carrinho.length > 0" class="carrinho">
       <h1>Seu Carrinho</h1>
       <ul class="carrinho-lista">
-        <li
-          v-for="(item, index) in carrinho"
-          :key="index"
-          class="carrinho-item"
-        >
-          <p>{{ item.nome }}</p>
-          <p class="preco">{{ item.preco | numeroPreco }}</p>
+        <li v-for="item in carrinho" :key="item.id" class="carrinho-item">
+          <div class="item-info">
+            <p>{{ item.nome }}</p>
+            <p class="preco">{{ item.preco | numeroPreco }}</p>
+          </div>
+          <div class="item-quantidade">
+            <button @click="diminuirQuantidade(item.id)">-</button>
+            <span>{{ item.quantidade }}</span>
+            <button @click="aumentarQuantidade(item.id)">+</button>
+          </div>
+          <p class="subtotal">
+            {{ (item.preco * item.quantidade) | numeroPreco }}
+          </p>
           <button @click="removerItem(item.id)" class="btn-remover">
             Remover
           </button>
@@ -32,7 +38,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
 
 export default {
   name: "Carrinho",
@@ -40,13 +46,34 @@ export default {
     ...mapState(["carrinho"]),
     total() {
       return this.carrinho.reduce((acc, item) => {
-        return acc + Number(item.preco);
+        return acc + item.preco * item.quantidade;
       }, 0);
     },
   },
   methods: {
+    ...mapMutations(["REMOVER_ITEM", "ATUALIZAR_QUANTIDADE_ITEM"]),
     removerItem(itemId) {
-      this.$store.commit("REMOVER_ITEM", itemId);
+      this.REMOVER_ITEM(itemId);
+    },
+    aumentarQuantidade(itemId) {
+      const item = this.carrinho.find((item) => item.id === itemId);
+      if (item) {
+        this.ATUALIZAR_QUANTIDADE_ITEM({
+          itemId,
+          quantidade: item.quantidade + 1,
+        });
+      }
+    },
+    diminuirQuantidade(itemId) {
+      const item = this.carrinho.find((item) => item.id === itemId);
+      if (item && item.quantidade > 1) {
+        this.ATUALIZAR_QUANTIDADE_ITEM({
+          itemId,
+          quantidade: item.quantidade - 1,
+        });
+      } else if (item && item.quantidade === 1) {
+        this.removerItem(itemId);
+      }
     },
   },
 };
@@ -59,11 +86,37 @@ export default {
 }
 .carrinho-item {
   display: grid;
-  grid-template-columns: 1fr auto auto;
-  gap: 10px;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  gap: 20px;
   align-items: center;
-  padding: 10px 0;
+  padding: 15px 0;
   border-bottom: 1px solid #ccc;
+}
+.item-info {
+  display: flex;
+  flex-direction: column;
+}
+.preco {
+  color: #e80;
+  font-weight: bold;
+}
+.item-quantidade {
+  display: flex;
+  align-items: center;
+}
+.item-quantidade span {
+  padding: 0 10px;
+}
+.item-quantidade button {
+  border: 1px solid #ccc;
+  background: #f7f7f7;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+.subtotal {
+  font-weight: bold;
+  text-align: right;
 }
 .carrinho-total {
   text-align: right;

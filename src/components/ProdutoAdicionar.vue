@@ -4,10 +4,21 @@
     <input id="nome" name="nome" type="text" v-model="produto.nome" />
     <label for="preco">Preço (R$)</label>
     <input id="preco" name="preco" type="number" v-model="produto.preco" />
+    <label for="categoria">Categoria</label>
+    <select id="categoria" name="categoria" v-model="produto.categoria">
+      <option value="" disabled>Selecione a Categoria</option>
+      <option value="tecnologia">Tecnologia</option>
+      <option value="moda">Moda</option>
+      <option value="casa">Casa</option>
+    </select>
     <label for="fotos">Fotos</label>
     <input id="fotos" name="fotos" type="file" multiple ref="fotos" />
-    <label for="preco">Descrição</label>
-    <textarea id="preco" name="preco" v-model="produto.descricao"></textarea>
+    <label for="descricao">Descrição</label>
+    <textarea
+      id="descricao"
+      name="descricao"
+      v-model="produto.descricao"
+    ></textarea>
     <input
       class="btn"
       type="button"
@@ -30,6 +41,7 @@ export default {
         descricao: "",
         fotos: null,
         vendido: "false",
+        categoria: "",
       },
     };
   },
@@ -47,6 +59,7 @@ export default {
       form.append("descricao", this.produto.descricao);
       form.append("vendido", this.produto.vendido);
       form.append("usuario_id", this.$store.state.usuario.id);
+      form.append("categoria", this.produto.categoria);
 
       return form;
     },
@@ -62,6 +75,15 @@ export default {
 
       button.removeAttribute("disabled");
       button.value = "Adicionar Produto";
+
+      this.produto = {
+        nome: "",
+        preco: "",
+        descricao: "",
+        fotos: null,
+        vendido: "false",
+        categoria: "",
+      };
     },
   },
 };
