@@ -9,6 +9,8 @@ import UsuarioVendas from "./views/usuario/UsuarioVendas.vue";
 import UsuarioCompras from "./views/usuario/UsuarioCompras.vue";
 import UsuarioEditar from "./views/usuario/UsuarioEditar.vue";
 import PaginaNaoEncontrada from "./views/PaginaNaoEncontrada.vue";
+import Carrinho from "./views/Carrinho.vue";
+import FinalizarCompra from "@/components/FinalizarCompra.vue";
 
 Vue.use(Router);
 
@@ -37,6 +39,11 @@ const router = new Router({
       component: Login,
     },
     {
+      path: "/carrinho",
+      name: "carrinho",
+      component: Carrinho,
+    },
+    {
       path: "/usuario",
       component: Usuario,
       meta: {
@@ -62,6 +69,11 @@ const router = new Router({
           path: "editar",
           name: "usuario-editar",
           component: UsuarioEditar,
+        },
+        {
+          path: "comprar",
+          name: "comprar",
+          component: FinalizarCompra,
         },
       ],
     },

@@ -20,6 +20,7 @@ export default new Vuex.Store({
       estado: "",
     },
     usuario_produtos: null,
+    carrinho: [],
   },
   mutations: {
     UPDATE_LOGIN(state, payload) {
@@ -32,7 +33,13 @@ export default new Vuex.Store({
       state.usuario_produtos = payload;
     },
     ADD_USUARIO_PRODUTOS(state, payload) {
-      state.usuario_produtos.unshit(payload);
+      state.usuario_produtos.unshift(payload);
+    },
+    ADICIONAR_ITEM(state, payload) {
+      state.carrinho.push(payload);
+    },
+    REMOVER_ITEM(state, itemId) {
+      state.carrinho = state.carrinho.filter((item) => item.id !== itemId);
     },
   },
   actions: {
