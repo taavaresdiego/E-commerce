@@ -1,15 +1,3 @@
-<template>
-  <section>
-    <ErroNotificacao :erros="erros" />
-
-    <CheckoutCep @update:endereco="endereco = $event" />
-
-    <button class="btn" @click.prevent="finalizarCompra">
-      Finalizar Compra
-    </button>
-  </section>
-</template>
-
 <script>
 import CheckoutCep from "@/components/CheckoutCep.vue";
 import ErroNotificacao from "./ErroNotificacao.vue";
@@ -18,7 +6,6 @@ import { mapState } from "vuex";
 
 export default {
   name: "FinalizarCompra",
-
   components: {
     CheckoutCep,
     ErroNotificacao,
@@ -27,7 +14,6 @@ export default {
   data() {
     return {
       erros: [],
-
       endereco: {
         cep: "",
         rua: "",
@@ -39,7 +25,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["usuario"]),
+    ...mapState(["usuario", "login"]),
     compra() {
       return {
         comprador_id: this.usuario.email,
@@ -50,28 +36,39 @@ export default {
     },
   },
   methods: {
-    criarTransacao() {
-      return api.post("/transacao", this.compra).then(() => {
+    async criarTransacao() {
+      try {
+        await api.post("/transacao", this.compra);
+
         this.$router.push({ name: "compras" });
-      });
+      } catch (error) {
+        this.erros.push(error.response.data.message);
+      }
     },
+
     async criarUsuario() {
+      this.erros = [];
       try {
         this.$store.commit("UPDATE_USUARIO", {
           ...this.usuario,
           ...this.endereco,
         });
+
         await this.$store.dispatch("criarUsuario", this.$store.state.usuario);
+
         await this.$store.dispatch("logarUsuario", this.$store.state.usuario);
+
         await this.$store.dispatch("getUsuario");
+
         await this.criarTransacao();
       } catch (error) {
         this.erros.push(error.response.data.message);
       }
     },
+
     finalizarCompra() {
       this.erros = [];
-      if (this.$store.state.login) {
+      if (this.login) {
         this.criarTransacao();
       } else {
         this.criarUsuario();
@@ -80,14 +77,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-h2 {
-  margin-top: 40px;
-  margin-bottom: 20px;
-}
-
-.btn {
-  background: #e80;
-}
-</style>

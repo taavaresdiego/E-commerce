@@ -2,16 +2,23 @@
   <section>
     <div v-if="compras">
       <h2>Compras</h2>
-      <div class="produtos-wrapper" v-for="(compra, index) in compras" :key="index">
+      <div
+        class="produtos-wrapper"
+        v-for="(compra, index) in compras"
+        :key="index"
+      >
         <ProdutoItem v-if="compra.produto" :produto="compra.produto">
           <p class="vendedor">
-            <span>Vendedor:</span>
-            {{compra.vendedor_id}}
+            <span>Vendedor:</span> {{ compra.vendedor_id }}
           </p>
         </ProdutoItem>
       </div>
     </div>
-    <PaginaCarregando v-else/>
+    <div v-else-if="!loading && !compras" class="sem-compras">
+      <p>Você ainda não realizou nenhuma compra.</p>
+      <router-link class="btn" to="/">Ver Produtos</router-link>
+    </div>
+    <PaginaCarregando v-else />
   </section>
 </template>
 
@@ -21,45 +28,58 @@ import { api } from "@/services.js";
 import { mapState } from "vuex";
 
 export default {
+  name: "UsuarioCompras",
   components: {
-    ProdutoItem
+    ProdutoItem,
   },
   data() {
     return {
-      compras: null
+      compras: null,
+      loading: true,
     };
   },
   computed: {
-    ...mapState(["usuario", "login"])
+    ...mapState(["usuario", "login"]),
   },
   methods: {
     getCompras() {
-      api.get(`/transacao?tipo=comprador_id`).then(response => {
+      this.loading = true;
+      api.get(`/transacao?comprador_id=${this.usuario.id}`).then((response) => {
         this.compras = response.data;
+        this.loading = false;
       });
-    }
+    },
   },
   watch: {
     login() {
       this.getCompras();
-    }
+    },
   },
   created() {
     if (this.login) {
       this.getCompras();
     }
-    document.title = "Usuário | Compras";
-  }
+  },
 };
 </script>
 
 <style scoped>
-.produto-wrapper {
+.produtos-wrapper {
   margin-bottom: 40px;
 }
 
-.vendedor span {
+.vendedor {
   color: #e80;
+  margin-top: 10px;
+}
+
+.sem-compras {
+  text-align: center;
+  padding: 40px;
+}
+
+.sem-compras .btn {
+  margin-top: 20px;
 }
 
 h2 {

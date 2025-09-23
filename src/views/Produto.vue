@@ -3,51 +3,56 @@
     <div v-if="produto" class="produto">
       <ul class="fotos" v-if="produto.fotos">
         <li v-for="(foto, index) in produto.fotos" :key="index">
-          <img :src="foto.src" :alt="foto.titulo">
+          <img :src="foto.src" :alt="foto.titulo" />
         </li>
       </ul>
       <div class="info">
-        <h1>{{produto.nome}}</h1>
-        <p class="preco">{{produto.preco | numeroPreco}}</p>
-        <p class="descricao">{{produto.descricao}}</p>
+        <h1>{{ produto.nome }}</h1>
+        <p class="preco">{{ produto.preco | numeroPreco }}</p>
+        <p class="descricao">{{ produto.descricao }}</p>
         <transition mode="out-in" v-if="produto.vendido === 'false'">
-          <button class="btn" v-if="!finalizar" @click="finalizar = true">Comprar</button>
-          <FinalizarCompra v-else :produto="produto"/>
+          <button class="btn" @click="adicionarAoCarrinho">
+            Adicionar ao Carrinho
+          </button>
         </transition>
-        <button v-else class="btn btn-disabled" disabled>Produto Vendido</button>
+        <button v-else class="btn btn-disabled" disabled>
+          Produto Vendido
+        </button>
       </div>
     </div>
-    <PaginaCarregando v-else/>
+    <PaginaCarregando v-else />
   </section>
 </template>
 
 <script>
 import { api } from "@/services.js";
-import FinalizarCompra from "@/components/FinalizarCompra.vue";
 
 export default {
-  name: "Produtos",
+  name: "Produto",
   props: ["id"],
-  components: {
-    FinalizarCompra
-  },
+
   data() {
     return {
       produto: null,
-      finalizar: false
     };
   },
   methods: {
     getProduto() {
-      api.get(`/produto/${this.id}`).then(response => {
+      api.get(`/produto/${this.id}`).then((response) => {
         this.produto = response.data;
         document.title = this.produto.nome;
       });
-    }
+    },
+
+    adicionarAoCarrinho() {
+      this.$store.commit("ADICIONAR_ITEM", this.produto);
+
+      this.$router.push({ name: "carrinho" });
+    },
   },
   created() {
     this.getProduto();
-  }
+  },
 };
 </script>
 
