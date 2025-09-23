@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import { api } from "@/services.js";
+
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -36,10 +37,28 @@ export default new Vuex.Store({
       state.usuario_produtos.unshift(payload);
     },
     ADICIONAR_ITEM(state, payload) {
-      state.carrinho.push(payload);
+      const itemExistente = state.carrinho.find(
+        (item) => item.id === payload.id
+      );
+      if (itemExistente) {
+        itemExistente.quantidade++;
+      } else {
+        const newItem = { ...payload, quantidade: 1 };
+        state.carrinho.push(newItem);
+      }
     },
     REMOVER_ITEM(state, itemId) {
-      state.carrinho = state.carrinho.filter((item) => item.id !== itemId);
+      const index = state.carrinho.findIndex((item) => item.id === itemId);
+      if (index > -1) {
+        state.carrinho.splice(index, 1);
+      }
+    },
+
+    ATUALIZAR_QUANTIDADE_ITEM(state, { itemId, quantidade }) {
+      const item = state.carrinho.find((item) => item.id === itemId);
+      if (item) {
+        item.quantidade = quantidade;
+      }
     },
   },
   actions: {
